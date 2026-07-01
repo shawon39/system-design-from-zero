@@ -1,9 +1,12 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" data-lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>System Design from Zero — An Interactive Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ---------- Design tokens ---------- */
   :root{
@@ -45,6 +48,16 @@
   }
   a{color:var(--accent); text-decoration:none}
   a:hover{text-decoration:underline}
+
+  /* ---------- Language toggle (English / Bangla) ---------- */
+  /* Elements carrying lang="en"/lang="bn" are shown only in the matching mode;
+     elements WITHOUT a lang attribute (code, diagrams, citations) show in both. */
+  html[data-lang="bn"] [lang="en"]{display:none !important}
+  html[data-lang="en"] [lang="bn"]{display:none !important}
+  html[data-lang="bn"] body{font-family:'Noto Sans Bengali','Hind Siliguri',var(--sans)}
+  html[data-lang="bn"] [lang="bn"]{font-family:'Noto Sans Bengali','Hind Siliguri',var(--sans)}
+  html[data-lang="bn"] [lang="bn"]{line-height:1.85}
+  html[data-lang="bn"] h1.page[lang="bn"],html[data-lang="bn"] h2.topic [lang="bn"]{line-height:1.4}
 
   /* ---------- Layout ---------- */
   .app{display:grid; grid-template-columns:312px minmax(0,1fr); min-height:100vh}
@@ -196,7 +209,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <h1>System Design&nbsp;<span style="color:var(--accent)">from Zero</span></h1>
-      <p>A beginner's guide for working engineers · verified June 2026</p>
+      <p><span lang="en">A beginner's guide for working engineers · verified June 2026</span><span lang="bn">কর্মজীবী ইঞ্জিনিয়ারদের জন্য beginner-বান্ধব একটি গাইড · যাচাই করা হয়েছে জুন ২০২৬-এ</span></p>
     </div>
     <nav class="nav" id="nav"><!-- generated --></nav>
   </aside>
@@ -207,8 +220,9 @@
       <button class="iconbtn hamburger" id="menuBtn" aria-label="Toggle sidebar" title="Toggle sidebar">☰</button>
       <div class="crumbs" id="crumbs"><b>Section 1</b> · Foundations</div>
       <div class="spacer"></div>
-      <span class="pill">✓ Complete · all 12 sections</span>
-      <button class="iconbtn" id="themeBtn" aria-label="Toggle theme"><span id="themeIc">🌙</span><span id="themeTx">Dark</span></button>
+      <span class="pill"><span lang="en">✓ Complete · all 12 sections</span><span lang="bn">✓ সম্পূর্ণ · সবগুলো ১২টি সেকশন</span></span>
+      <button class="iconbtn" id="langBtn" aria-label="Switch language"><span id="langIc">🌐</span><span id="langTx">বাংলা</span></button>
+      <button class="iconbtn" id="themeBtn" aria-label="Toggle theme"><span id="themeIc">🌙</span><span id="themeTx" lang="en">Dark</span><span id="themeTxBn" lang="bn">ডার্ক</span></button>
     </div>
 
     <div class="content">
@@ -547,6 +561,331 @@
             <li>Latency numbers — <a href="https://gist.github.com/jboner/2841832" target="_blank" rel="noopener">Jeff Dean / jboner gist</a>, <a href="https://norvig.com/21-days.html" target="_blank" rel="noopener">Peter Norvig</a>.</li>
             <li>Estimation — <a href="https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation" target="_blank" rel="noopener">ByteByteGo, Back-of-the-envelope estimation</a>; <a href="https://en.wikipedia.org/wiki/Binary_prefix" target="_blank" rel="noopener">Binary prefix</a>, <a href="https://en.wikipedia.org/wiki/UTF-8" target="_blank" rel="noopener">UTF-8</a>, <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier" target="_blank" rel="noopener">UUID</a> (Wikipedia).</li>
             <li>Requirements &amp; qualities — <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank" rel="noopener">AWS Well-Architected (Reliability)</a>, <a href="https://quality.arc42.org/standards/iso-25010" target="_blank" rel="noopener">ISO/IEC 25010</a>, <a href="https://www.geeksforgeeks.org/software-engineering/functional-vs-non-functional-requirements/" target="_blank" rel="noopener">Functional vs non-functional</a>; framework — <a href="https://bytebytego.com/courses/system-design-interview/a-framework-for-system-design-interviews" target="_blank" rel="noopener">ByteByteGo / Alex Xu</a>.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION 1 PANEL — বাংলা ===================== -->
+      <section class="panel" id="s1bn" lang="bn" data-crumb="ভিত্তি">
+        <p class="eyebrow">সেকশন ১ · ভিত্তি</p>
+        <h1 class="page">ভিত্তি: একটি Request, একটি Program ও পরিভাষা</h1>
+        <p class="lead">কোনো কিছু scale করার আগে আপনার দরকার একটা পরিষ্কার, রহস্যহীন ছবি — কীভাবে একটা single request একটা single program-এ গিয়ে পৌঁছায় — আর সবাই যে শব্দগুলো হরদম ব্যবহার করে (server, instance, container, HTTP) সেগুলোর স্পষ্ট সংজ্ঞা। এই সেকশনটা সেই মেঝেটাই তৈরি করে। পরের সবকিছু এর ওপরই দাঁড়িয়ে আছে।</p>
+
+        <div class="callout c-key">
+          <div class="ttl"><span class="ic">🎯</span>এই গাইডটা কীভাবে পড়বেন</div>
+          <p>প্রতিটি টপিক চারটা প্রশ্নের উত্তর দেয় — <b>এটা কী</b>, <b>কেন আছে</b>, <b>কীভাবে কাজ করে</b>, আর <b>কখন কাজে লাগে (আর কখন লাগে না)</b> — এবং প্রতিবার একটা বাস্তব উদাহরণে বসিয়ে দেয়। এই রঙিন বাক্সগুলো খেয়াল রাখবেন:</p>
+          <div class="legend">
+            <div class="li"><span class="sw" style="background:var(--jrg)"></span><div><b>Jargon decoder</b> — কোনো term প্রথমবার এলে তার সহজ বাংলা ব্যাখ্যা।</div></div>
+            <div class="li"><span class="sw" style="background:var(--scn)"></span><div><b>বাস্তব উদাহরণ</b> — একটা concrete পরিস্থিতি, যা ধারণাটা মাথায় বসিয়ে দেয়।</div></div>
+            <div class="li"><span class="sw" style="background:var(--key)"></span><div><b>মূল কথা</b> — যে এক বাক্য মনে রাখলেই চলে।</div></div>
+            <div class="li"><span class="sw" style="background:var(--warn)"></span><div><b>সাবধান</b> — beginner-দের একটা সাধারণ ফাঁদ বা ভুল ধারণা।</div></div>
+          </div>
+        </div>
+
+        <!-- 1.1 -->
+        <h2 class="topic" id="bn-t-what"><span class="kicker">১.১</span>“System design” আসলে কী — আর সবাই যে interview-ছকটা ব্যবহার করে</h2>
+        <p><b>এটা কী।</b> System design হলো এই সিদ্ধান্ত নেওয়ার কারিগরি — একটা software system-এর অংশগুলো (program, database, network, queue) কীভাবে একসাথে জোড়া লাগবে যাতে পুরো জিনিসটা যথেষ্ট দ্রুত, যথেষ্ট নির্ভরযোগ্য আর কাজের জন্য যথেষ্ট সস্তা হয়। একটা function লেখা হলো <em>programming</em>; আর ওই function-টা বিশটা machine-এ, একটা load balancer-এর পেছনে চালানো, cache থেকে পড়া আর একটা replicated database-এ লেখা — এই সিদ্ধান্তগুলোই <em>system design</em>।</p>
+        <p><b>কেন আছে।</b> একটা single computer-এ একটা single program যতটুকু পারে, ততটুকুই। যে মুহূর্তে আপনার user, data বা uptime-এর প্রতিশ্রুতি একটা machine-এর সাধ্যের বেশি হয়ে যায়, তখন কাজটা অনেকগুলো অংশের মধ্যে ছড়িয়ে দিতে হয় — আর সেই অংশগুলো ফেল করতে পারে, পিছিয়ে পড়তে পারে, বা একে অন্যের সাথে অমিল হতে পারে। এই বিশৃঙ্খলাকে বশে আনার জ্ঞানই system design।</p>
+        <p><b>কীভাবে কাজ করে (আদর্শ ছকটা)।</b> সবচেয়ে বেশি শেখানো পদ্ধতি — Alex Xu-এর <em>System Design Interview</em> আর Grokking-এর জনপ্রিয় করা — ধাপে ধাপে চলে। সমাধানে ঝাঁপ দেবেন না; ধাপগুলো ধরে এগোন:</p>
+        <figure class="diagram"><div class="mhost" data-diagram="d5"><div class="mloading">rendering diagram…</div></div>
+          <figcaption><b>System-design চিন্তার ধারা।</b> কী বানাচ্ছেন সেটা পরিষ্কার করুন সাইজ করার আগে; সাইজ করুন আঁকার আগে; সবচেয়ে ঝুঁকিপূর্ণ অংশে গভীরে ঢুকুন; তারপর bottleneck খুঁজুন। Xu একে একটা ~৪৫-মিনিটের interview-তে ৪ ধাপে সাজান; আমরা এটাকে পুরো গাইড জুড়ে একটা চিন্তার checklist হিসেবে ব্যবহার করব।<span class="src"><a href="https://bytebytego.com/courses/system-design-interview/a-framework-for-system-design-interviews" target="_blank" rel="noopener">[ByteByteGo]</a></span></figcaption>
+        </figure>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান</div>
+          <p>এটা একটা <b>প্রস্তাবিত প্রক্রিয়া</b>, কোনো গোপন নম্বর দেওয়ার rubric নয়। ByteByteGo বা Grokking কেউই কোনো numeric grade sheet প্রকাশ করে না; কোম্পানিগুলো তাদের নিজস্ব ভেতরকার মানদণ্ডে বিচার করে। ধাপগুলোকে <em>জমে না যাওয়ার</em> একটা উপায় ভাবুন, পয়েন্ট কামানোর ছক নয়।<span class="src"><a href="https://bytebytego.com/courses/system-design-interview/a-framework-for-system-design-interviews" target="_blank" rel="noopener">[ByteByteGo]</a></span></p>
+        </div>
+        <div class="callout c-scn">
+          <div class="ttl"><span class="ic">🌍</span>বাস্তব উদাহরণ</div>
+          <p>আপনাকে বলা হলো “Twitter design করো।” একজন beginner সাথে সাথে বক্স আঁকতে শুরু করে। একজন system-design চিন্তক আগে জিজ্ঞেস করে: <em>কতজন user? Read-heavy না write-heavy? Tweet কি সাথে সাথে দেখাতে হবে, নাকি কয়েক সেকেন্ড দেরি চলবে? draft হারানো কি মানা যায়?</em> এই উত্তরগুলোই আপনার আঁকা প্রতিটা বক্স বদলে দেয়। ধাপ ১ (পরিষ্কার করা) আসলে ৮০% কাজ করে ফেলছে।</p>
+        </div>
+
+        <!-- 1.2 -->
+        <h2 class="topic" id="bn-t-server"><span class="kicker">১.২</span>Server আসলে কী (জাদুর বাক্স নয়)</h2>
+        <p><b>এটা কী।</b> একটা <span class="term" title="যে program request-এর জন্য অপেক্ষা করে ও উত্তর দেয়">server</span> মূলত <b>এমন একটা program যা বসে থেকে request-এর জন্য অপেক্ষা করে, তারপর উত্তর দেয়</b>। ব্যস, এতটুকুই। শব্দটার অনেক মানে — লোকে যে <em>computer</em>-এ ওই program চলে সেটাকেও “server” বলে — কিন্তু আসল ভারবহনকারী মানে হলো <em>ভূমিকা</em>: যে জিনিসটা শোনে ও উত্তর দেয়।</p>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder — “server”-এর দুটো মানে</div>
+          <dl>
+            <dt>Server (ভূমিকা)</dt><dd>একটা চলমান program যা আসা request শোনে আর উত্তর পাঠায় — যেমন web traffic-এর জবাব দেওয়া Nginx process।</dd>
+            <dt>Server (machine)</dt><dd>এমন program চালানোর জন্য বরাদ্দ একটা computer — “rack-এ একটা server”। কেউ যখন বলে <em>“server-টা crash করেছে,”</em> তার মানে হতে পারে program-টা মরে গেছে <em>অথবা</em> পুরো box-টাই বন্ধ। দ্বিধাটা সত্যিকারের; কোনটা বোঝাচ্ছে জিজ্ঞেস করে নিন।</dd>
+          </dl>
+        </div>
+        <p><b>কেন আছে।</b> পুরো internet চলে একটা সহজ শ্রমবিভাজনের ওপর: কিছু program <em>জিজ্ঞেস করে</em> (client) আর কিছু <em>উত্তর দেয়</em> (server)। “উত্তর” দিকটা কেন্দ্রীভূত করলে অনেক user একটা authoritative data ও logic-এর কপি ভাগ করে নিতে পারে, নিজের নিজের কপি রাখার বদলে।</p>
+        <p><b>কীভাবে কাজ করে।</b> একটা server program একটা network address আর একটা <span class="term" title="একটা numbered endpoint যা traffic-কে machine-এর নির্দিষ্ট program-এ পাঠায়">port</span>-এ <b>bind</b> করে (port নিয়ে ১.৬-এ আরও), তারপর অনন্তকাল লুপ চালায়: request নাও → কিছু কাজ করো → উত্তর পাঠাও → পরেরটার জন্য অপেক্ষা করো। MDN যেমন বলে, একটা web server “hardware, software, বা দুটোই” হতে পারে — তবে ন্যূনতম software অংশটা হলো একটা HTTP server যা web-এর request/response ভাষা বোঝে।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_web_server" target="_blank" rel="noopener">[MDN]</a></span></p>
+        <div class="callout c-key">
+          <div class="ttl"><span class="ic">🔑</span>মূল কথা</div>
+          <p>Server হলো <b>request-এর জন্য অপেক্ষমাণ একটা program</b>। এই ছবিটা ধরে রাখুন — system design-এর বেশিরভাগই হলো “আমাদের কি যথেষ্ট এমন অপেক্ষমাণ program আছে, ঠিক data দিয়ে খাওয়ানো, যথেষ্ট দ্রুত, কিছু না হারিয়ে?”</p>
+        </div>
+
+        <!-- 1.3 -->
+        <h2 class="topic" id="bn-t-layers"><span class="kicker">১.৩</span>“Server”-এর ভেতরের স্তর: web server বনাম application server</h2>
+        <p><b>এটা কী।</b> আপনার web app যখন চলে, “server” আসলে সাধারণত <em>দুটো</em> সহযোগী program: সামনে একটা <b>web server</b> আর পেছনে একটা <b>application server</b>।</p>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder</div>
+          <dl>
+            <dt>Web server (যেমন Nginx, Apache)</dt><dd>HTTP সাবলীলভাবে বলে। static file (HTML, CSS, image) <em>যেমন আছে তেমন</em> পরিবেশন করে, encryption সামলায়, আর dynamic কিছু হলে সেটা পেছনের app-এ পাঠিয়ে দেয়।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_web_server" target="_blank" rel="noopener">[MDN]</a></span></dd>
+            <dt>Application server (আপনার code)</dt><dd><em>আপনার</em> program চালিয়ে response <b>তৈরি</b> করে — database-এ query করে, business logic প্রয়োগ করে, page বানায়। বাস্তবে এটা একটা Python process (Gunicorn/Uvicorn দিয়ে চালানো), একটা Node.js process, একটা Java servlet container, ইত্যাদি।</dd>
+            <dt>Reverse proxy</dt><dd>web server-এরই একটা <em>mode</em>: এটা client-এর request নিয়ে একটা লুকানো backend-এ পাঠায়, তারপর backend-এর উত্তর ফিরিয়ে দেয়। client-এর কাছে reverse proxy-ই <em>website</em>। Apache একে একই web-server software-এর gateway ভূমিকা হিসেবে বর্ণনা করে।<span class="src"><a href="https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html" target="_blank" rel="noopener">[Apache]</a></span></dd>
+          </dl>
+        </div>
+        <p><b>কেন আছে।</b> একটা file পরিবেশন করা আর application logic চালানো — আলাদা কাজ। web server প্রথমটায় দারুণ দক্ষ; আপনার app framework দ্বিতীয়টার জন্য তৈরি। এদের আলাদা করলে web server raw network load সামলাতে পারে, encryption terminate করতে, cache করতে আর আপনার app-কে আড়াল করতে পারে — যাতে সেটা কখনো সরাসরি খোলা internet-এর মুখোমুখি না হয়।<span class="src"><a href="https://www.f5.com/glossary/reverse-proxy" target="_blank" rel="noopener">[F5/NGINX]</a></span></p>
+        <figure class="diagram"><div class="mhost" data-diagram="d2"><div class="mloading">rendering diagram…</div></div>
+          <figcaption><b>একটা machine-এর পেছনে দুই স্তর।</b> web server (Nginx/Apache) internet-এর মুখোমুখি — HTTP, TLS, static file আর reverse-proxy সামলায়। এটা dynamic request আপনার application server-এ পাঠায়, যেটা database-এর সাথে কথা বলে response বানায়। ড্যাশ তীরগুলো উত্তরের পথ।</figcaption>
+        </figure>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান — term-গুলো সত্যিই মিলেমিশে যায়</div>
+          <p><em>একই software</em> (Nginx, Apache) একসাথে “web server” আর “reverse proxy” দুটোই। আবার কিছু tool (যেমন Tomcat) একই সাথে “web server” আর “application server” — দুটোই বলা হয়। ঝকঝকে আলাদা বাক্স আশা করবেন না — এগুলো একটা program-এর একসাথে খেলা কয়েকটা ভূমিকা।<span class="src"><a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy.html" target="_blank" rel="noopener">[Apache mod_proxy]</a></span></p>
+        </div>
+
+        <!-- 1.4 -->
+        <h2 class="topic" id="bn-t-clientserver"><span class="kicker">১.৪</span>Client–server ও request/response round-trip</h2>
+        <p><b>এটা কী।</b> web-এর প্রায় সবকিছু একটা প্যাটার্নের ওপর দাঁড়ানো: একটা <b>client</b> জিজ্ঞেস করে, একটা <b>server</b> উত্তর দেয় — এক <em>request</em>, এক <em>response</em>। MDN বলে, HTTP হলো “একটা client–server protocol: request-গুলো client, সাধারণত browser, শুরু করে।”<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" target="_blank" rel="noopener">[MDN]</a></span></p>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder</div>
+          <dl>
+            <dt>Client</dt><dd>যে program কথোপকথন <em>শুরু</em> করে ও কিছু চায় — আপনার browser, একটা mobile app, বা এমনকি অন্য একটা server যে API call করছে।</dd>
+            <dt>Request / Response</dt><dd>আদান-প্রদানের দুটো message। client একটা request পাঠায় (“/home দাও”); server একটা response পাঠায় (একটা status code + content)।</dd>
+            <dt>Round-trip</dt><dd>একটা পুরো যাওয়া-আসার চক্র: request গেল, response এলো। এর সময়টাই “কতটা ধীর লাগছে?”-র বড় একটা অংশ।</dd>
+          </dl>
+        </div>
+        <p><b>কেন আছে।</b> এটা একটা পরিষ্কার চুক্তি। client-কে জানতে হয় না server <em>কীভাবে</em> উত্তরটা বানায়; server-কেও আগে থেকে জানতে হয় না client কে। এই decoupling-ই একটা browser-কে <em>যেকোনো</em> website-এর সাথে আর একটা server-কে <em>যেকোনো</em> client-এর সাথে কথা বলতে দেয়।</p>
+        <figure class="diagram"><div class="mhost" data-diagram="d1"><div class="mloading">rendering diagram…</div></div>
+          <figcaption><b>web-এর পরমাণু একক।</b> এক request বেরোল, এক response ফিরল। প্রতিটা page load, API call আর button click অনেকগুলো এমন round-trip দিয়ে তৈরি।</figcaption>
+        </figure>
+        <div class="callout c-scn">
+          <div class="ttl"><span class="ic">🌍</span>বাস্তব উদাহরণ</div>
+          <p>আপনি <code>maps.example.com</code> খুললেন। আপনার browser (client) page-এর জন্য request পাঠায়; server HTML দিয়ে উত্তর দেয়। ওই HTML বলে “আমার আরও ৩০টা map tile, একটা stylesheet আর কিছু JavaScript লাগবে” — তাই browser আরও ৩০+ request ছোঁড়ে, প্রতিটা নিজের round-trip। একটা “page load” আসলে client–server আদান-প্রদানের একটা ঝাঁক। এজন্যই round-trip-এর সংখ্যা ও খরচ কমানো (পরে caching আর CDN-এর মূল বিষয়) এত গুরুত্বপূর্ণ।</p>
+        </div>
+
+        <!-- 1.5 -->
+        <h2 class="topic" id="bn-t-instance"><span class="kicker">১.৫</span>Machine বনাম VM বনাম instance বনাম container বনাম process</h2>
+        <p>এই পাঁচটা শব্দ একে অন্যের বদলে ব্যবহার হয় আর নিঃশব্দে সবাইকে বিভ্রান্ত করে। বাইরে থেকে ভেতরে — এই হলো পরিষ্কার সংস্করণ।</p>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder — hardware থেকে আপনার চলমান code পর্যন্ত</div>
+          <dl>
+            <dt>Machine</dt><dd>একটা computer — আসল hardware (CPU, RAM, disk, network) বা তার virtual সমতুল্য। সবচেয়ে সাধারণ শব্দ। (“host” আর “box” আটপৌরে প্রতিশব্দ।)</dd>
+            <dt>Virtual machine (VM)</dt><dd>এমন software যা <b>hardware virtualize</b> করে: একটা <span class="term" title="যে software VM তৈরি ও চালায়">hypervisor</span> একটা physical machine-কে কয়েকটা VM-এ ভাগ করে, প্রতিটার নিজস্ব kernel সহ একটা <b>পূর্ণ guest OS</b> চলে। শক্ত isolation; ভারী (image দশক-GB, real computer-এর মতো boot হয়)।<span class="src"><a href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/about/containers-vs-vm" target="_blank" rel="noopener">[Microsoft]</a></span></dd>
+            <dt>Instance</dt><dd>cloud-এর ভাষায়, আপনার provision করা একটা চলমান VM। AWS আক্ষরিকভাবে একটা EC2 instance-কে বলে “AWS Cloud-এর একটা virtual server,” যা একটা template (AMI) থেকে চালু হয়।<span class="src"><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html" target="_blank" rel="noopener">[AWS]</a></span> “Instance” মানে জোর দেয় <em>একটা নির্দিষ্ট চলমান কপি</em>।</dd>
+            <dt>Container (যেমন Docker)</dt><dd>হালকা একটা box যা hardware-এর বদলে <b>operating system virtualize</b> করে: container-রা “machine-এর OS kernel ভাগ করে নেয়, তাই প্রতি application-এ আলাদা OS লাগে না।”<span class="src"><a href="https://www.docker.com/resources/what-container/" target="_blank" rel="noopener">[Docker]</a></span> ফলাফল: image দশক-MB, container চালু হয় সেকেন্ডে — তবে VM-এর চেয়ে দুর্বল security boundary।</dd>
+            <dt>Process</dt><dd>একটা চলমান program, OS-এর দেওয়া নিজের একটুকরো memory সহ। একটা container মূলত shared kernel-এর ওপর এক (বা কয়েকটা) isolated process। আপনার code, চলার সময়, <em>একটা process</em>।</dd>
+          </dl>
+        </div>
+        <p><b>কেন এই পার্থক্য জরুরি।</b> “আরেকটা <em>instance</em> spin up করো” মানে আরেকটা VM provision করা (ভারী, শক্ত isolation)। “আরেকটা <em>container</em> চালাও” মানে বিদ্যমান machine-এ আরেকটা হালকা box চালু করা (সস্তা, দ্রুত, ঘন)। কোনটা বোঝাচ্ছেন সেটা জানলেই cost, speed আর isolation-এর trade-off ঠিক থাকে।</p>
+        <p><b>কীভাবে এগুলো একের ভেতর এক বসে।</b> এগুলো প্রতিযোগী পছন্দ নয় — এরা <em>স্তরে স্তরে</em> সাজে। Microsoft বলে “container-এর অনেক deployment host হিসেবে VM ব্যবহার করে… বিশেষত cloud-এ।”<span class="src"><a href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/about/containers-vs-vm" target="_blank" rel="noopener">[Microsoft]</a></span></p>
+        <figure class="diagram"><div class="mhost" data-diagram="d3"><div class="mloading">rendering diagram…</div></div>
+          <figcaption><b>স্তর, প্রতিদ্বন্দ্বী নয়।</b> একটা physical machine একটা hypervisor চালায় → এক বা একাধিক VM (প্রতিটা নিজস্ব OS সহ একটা cloud “instance”) → প্রতিটা VM অনেক container চালাতে পারে (ওই OS-এর kernel ভাগ করে) → প্রতিটা container আপনার process চালায়। template-থেকে-চলমান প্যাটার্ন বারবার ফেরে: একটা AMI হয় instance, ঠিক যেমন একটা Docker image হয় container।</figcaption>
+        </figure>
+        <div class="when">
+          <div class="when-card good"><h4>✓ VM / instance বেছে নিন যখন</h4>
+            <ul><li>শক্ত security boundary বা host-এর চেয়ে আলাদা OS দরকার।</li><li>দীর্ঘস্থায়ী, ভারী workload চালাচ্ছেন।</li><li>সবচেয়ে সহজ মানসিক ছবি চান: “cloud-এ একটা computer।”</li></ul></div>
+          <div class="when-card bad"><h4>✓ Container বেছে নিন যখন</h4>
+            <ul><li>দ্রুত startup চান আর একটা machine-এ অনেক কপি ঘনভাবে বসাতে চান।</li><li>“আমার machine-এ চলে” যেন production-এও চলে (image-ই dependency বহন করে)।</li><li>stateless app-এর কপি সারাক্ষণ উপরে-নিচে scale করছেন।</li></ul></div>
+        </div>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান</div>
+          <p>Docker বাজারজাত করে “industry-র সবচেয়ে শক্তিশালী default isolation” — এটা <em>container tool-দের মধ্যে</em> তুলনা, container যে VM-এর চেয়ে ভালো isolate করে তা নয়। Microsoft স্পষ্ট: VM শক্ত security boundary দেয়, কারণ প্রতিটা VM-এর নিজস্ব kernel।<span class="src"><a href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/about/containers-vs-vm" target="_blank" rel="noopener">[Microsoft]</a></span></p>
+        </div>
+
+        <!-- 1.6 -->
+        <h2 class="topic" id="bn-t-request"><span class="kicker">১.৬</span>একটা web request-এর পুরো যাত্রা, শুরু থেকে শেষ</h2>
+        <p><b>এটা কী।</b> “আপনি Enter চাপলেন” থেকে “page দেখা গেল” পর্যন্ত পুরো পথ। পাঁচটা পদক্ষেপ: <b>নাম → নম্বর → পাইপ → জিজ্ঞাসা → উত্তর</b> (তারপর আঁকা)।</p>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder</div>
+          <dl>
+            <dt>DNS (Domain Name System)</dt><dd>internet-এর ফোনবুক। এটা <code>example.com</code>-এর মতো মানুষের নাম-কে একটা machine address-এ (IP) অনুবাদ করে।<span class="src"><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/welcome-dns-service.html" target="_blank" rel="noopener">[AWS]</a></span></dd>
+            <dt>IP address</dt><dd>network-এ একটা computer-এর সংখ্যাসূচক ঠিকানা, যেমন <code>192.0.2.44</code> (IPv4, 32-bit) বা লম্বা IPv6 রূপ (128-bit)। এগুলো মুখস্থ না রাখতে হয় বলেই DNS আছে।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Glossary/IP_Address" target="_blank" rel="noopener">[MDN]</a></span></dd>
+            <dt>Port</dt><dd>IP যদি আপনাকে ঠিক <em>machine</em>-এ নিয়ে যায়, port নম্বর নিয়ে যায় ঠিক <em>program</em>-এ। web-এর default: <b>HTTP-র জন্য 80, HTTPS-র জন্য 443</b> (IANA বরাদ্দ করে)।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Glossary/Port" target="_blank" rel="noopener">[MDN]</a></span></dd>
+            <dt>TCP / TLS</dt><dd>TCP হলো browser যে নির্ভরযোগ্য দুমুখী “পাইপ” server-এ খোলে। TLS হলো তার ওপর যোগ হওয়া encryption স্তর, HTTPS-এর জন্য (তালার চিহ্ন)।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" target="_blank" rel="noopener">[MDN]</a></span></dd>
+          </dl>
+        </div>
+        <p><b>DNS কীভাবে একটা নাম resolve করে।</b> আপনার computer একটা <b>recursive resolver</b>-কে জিজ্ঞেস করে (সাধারণত আপনার ISP চালায়)। উত্তর cache না থাকলে সে একটা চেইন হাঁটে: একটা <b>root</b> nameserver তাকে <code>.com</code>-এর <b>TLD</b> server-এর দিকে পাঠায়, যা domain-এর <b>authoritative</b> nameserver-এর দিকে পাঠায়, যা আসল IP ফেরত দেয়।<span class="src"><a href="https://www.cloudflare.com/learning/dns/dns-server-types/" target="_blank" rel="noopener">[Cloudflare]</a></span> প্রতিটা উত্তর একটা নির্দিষ্ট সময়ের জন্য cache থাকে — তার <span class="term" title="Time To Live: একটা cache করা DNS উত্তর কতক্ষণ বৈধ থাকে">TTL</span> — তাই বারবার lookup চেইনটা এড়িয়ে যায়।</p>
+        <figure class="diagram"><div class="mhost" data-diagram="d4"><div class="mloading">rendering diagram…</div></div>
+          <figcaption><b>পুরো যাত্রা।</b> DNS দিয়ে নাম-কে IP-তে resolve করুন, ওই IP-র ঠিক port-এ একটা TCP connection খুলুন (HTTPS-এর জন্য একটা TLS handshake সহ), HTTP request পাঠান, HTTP response নিন, আর render করুন। AWS-এর Route 53 walkthrough আর MDN-এর HTTP overview থেকে জোড়া লাগানো।<span class="src"><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/welcome-dns-service.html" target="_blank" rel="noopener">[AWS]</a> <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" target="_blank" rel="noopener">[MDN]</a></span></figcaption>
+        </figure>
+        <div class="callout c-scn">
+          <div class="ttl"><span class="ic">🌍</span>বাস্তব উদাহরণ</div>
+          <p>একজন user email করল: “তোমার site down!” — কিন্তু শুধু <em>তার</em> জন্য। আপনি ঠিকঠাক ঢুকতে পারছেন। এই pipeline জানা থাকলে আপনি ধাপে ধাপে দেখেন: এটা কি DNS (তার resolver-এ পুরনো/ভাঙা record)? TCP/TLS connection (certificate বা firewall সমস্যা)? নাকি server-এর HTTP response (একটা 500 error)? diagram-এর প্রতিটা ধাপ হলো request ফেল করার একটা জায়গা — আর আপনার খোঁজার একটা জায়গা।</p>
+        </div>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান (একটা সৎ সরলীকরণ)</div>
+          <p>দেখানো DNS চেইনটা <em>cache-হীন সবচেয়ে খারাপ ক্ষেত্র</em>; বাস্তবে আপনার OS আর browser-ও cache রাখে, তাই বেশিরভাগ lookup আগেই শর্টকাট নেয়। আর “সবসময় TCP” আজকাল ঠিক নয়: আধুনিক HTTP/3 QUIC-এর ওপর চলে (UDP-ভিত্তিক) আর connection ও encryption handshake মিলিয়ে ফেলে। মানসিক ছবির জন্য ওপরের পাঁচ পদক্ষেপ একদম সঠিক।</p>
+        </div>
+
+        <!-- 1.7 -->
+        <h2 class="topic" id="bn-t-http"><span class="kicker">১.৭</span>HTTP কাছ থেকে: method, status code, header — আর কেন এটা “stateless”</h2>
+        <p><b>এটা কী।</b> HTTP হলো web-এর request/response <em>ভাষা</em>। একটা request বহন করে একটা <b>method</b> (ক্রিয়া), একটা path, header, আর ঐচ্ছিক একটা body। একটা response বহন করে একটা <b>status code</b>, header, আর ঐচ্ছিক একটা body।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" target="_blank" rel="noopener">[MDN]</a></span> HTTP সর্বত্র পাবেন — এগুলো এখনই দীর্ঘমেয়াদি স্মৃতিতে ঢুকিয়ে নিন।</p>
+        <h3 class="sub">Method (ক্রিয়া) — আর দুটো জরুরি শব্দ: <em>safe</em> ও <em>idempotent</em></h3>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder</div>
+          <dl>
+            <dt>Safe</dt><dd>method-টা read-only — server-এ কিছু বদলানোর কথা নয়। (RFC 9110 §9.2.1)<span class="src"><a href="https://www.rfc-editor.org/rfc/rfc9110#name-method-definitions" target="_blank" rel="noopener">[RFC 9110]</a></span></dd>
+            <dt>Idempotent</dt><dd>একবারের বদলে <em>দুবার</em> করলেও একই শেষ ফল — তাই network গোলযোগের পর retry করা নিরাপদ। (RFC 9110 §9.2.2) এটা <em>server-এর state</em> নিয়ে, response নিয়ে নয়: দ্বিতীয় একটা <code>DELETE</code> হয়তো 404 ফেরত দেবে, তবু method-টা idempotent।<span class="src"><a href="https://www.rfc-editor.org/rfc/rfc9110#name-method-definitions" target="_blank" rel="noopener">[RFC 9110]</a></span></dd>
+          </dl>
+        </div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Method</th><th>সাধারণ ব্যবহার</th><th>Safe?</th><th>Idempotent?</th></tr></thead>
+          <tbody>
+            <tr><td><code>GET</code></td><td>একটা resource পড়া / আনা</td><td class="y">হ্যাঁ</td><td class="y">হ্যাঁ</td></tr>
+            <tr><td><code>HEAD</code></td><td>GET-এর মতো তবে শুধু header (অস্তিত্ব/আকার যাচাই)</td><td class="y">হ্যাঁ</td><td class="y">হ্যাঁ</td></tr>
+            <tr><td><code>OPTIONS</code></td><td>কী অনুমোদিত জিজ্ঞাসা (CORS preflight-এ)</td><td class="y">হ্যাঁ</td><td class="y">হ্যাঁ</td></tr>
+            <tr><td><code>POST</code></td><td>তৈরি / জমা / ট্রিগার (সাধারণ write)</td><td class="n">না</td><td class="n">না</td></tr>
+            <tr><td><code>PUT</code></td><td>একটা resource পুরোপুরি replace</td><td class="n">না</td><td class="y">হ্যাঁ</td></tr>
+            <tr><td><code>PATCH</code></td><td>একটা resource আংশিক update</td><td class="n">না</td><td class="n">না*</td></tr>
+            <tr><td><code>DELETE</code></td><td>একটা resource মোছা</td><td class="n">না</td><td class="y">হ্যাঁ</td></tr>
+          </tbody>
+        </table></div>
+        <p style="font-size:13.5px;color:var(--muted);margin-top:-6px">*<code>PATCH</code> RFC 5789-এ সংজ্ঞায়িত (RFC 9110-এ নয়) এবং সাধারণত safe বা idempotent কোনোটাই নয় (যদিও একটা নির্দিষ্ট PATCH চাইলে idempotent বানানো যায়)।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" target="_blank" rel="noopener">[MDN]</a></span> সব safe method idempotent; উল্টোটা নয় — <code>PUT</code> ও <code>DELETE</code> data বদলায় তবু idempotent।</p>
+        <h3 class="sub">Status code (উত্তরের শিরোনাম)</h3>
+        <p>প্রথম অঙ্কটা শ্রেণি বলে দেয়, তাই অচেনা code-এও যুক্তিসঙ্গতভাবে সাড়া দিতে পারেন:<span class="src"><a href="https://www.rfc-editor.org/rfc/rfc9110#name-overview-of-status-codes" target="_blank" rel="noopener">[RFC 9110]</a></span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Code</th><th>শ্রেণি</th><th>মানে</th></tr></thead>
+          <tbody>
+            <tr><td><code>200</code> OK</td><td class="codeclass" style="color:var(--good)">2xx সফল</td><td>request সফল।</td></tr>
+            <tr><td><code>201</code> Created</td><td class="codeclass" style="color:var(--good)">2xx সফল</td><td>সফল, আর একটা নতুন resource তৈরি হয়েছে (প্রায়ই POST-এর পর)।</td></tr>
+            <tr><td><code>204</code> No Content</td><td class="codeclass" style="color:var(--good)">2xx সফল</td><td>সফল; body-তে ফেরত দেওয়ার কিছু নেই (DELETE-এর পর সাধারণ)।</td></tr>
+            <tr><td><code>301</code> Moved Permanently</td><td class="codeclass" style="color:#9a7b22">3xx redirect</td><td>resource স্থায়ীভাবে নতুন URL-এ; এখন থেকে সেটাই ব্যবহার করো।</td></tr>
+            <tr><td><code>302</code> Found</td><td class="codeclass" style="color:#9a7b22">3xx redirect</td><td>সাময়িক redirect; মূল URL-ই ব্যবহার করতে থাকো।</td></tr>
+            <tr><td><code>304</code> Not Modified</td><td class="codeclass" style="color:#9a7b22">3xx redirect</td><td>তোমার cache করা কপি এখনো ভালো — আবার download বাঁচায় (caching)।</td></tr>
+            <tr><td><code>400</code> Bad Request</td><td class="codeclass" style="color:var(--warn)">4xx client error</td><td>request-ই ত্রুটিপূর্ণ; retry-র আগে ঠিক করো।</td></tr>
+            <tr><td><code>401</code> Unauthorized</td><td class="codeclass" style="color:var(--warn)">4xx client error</td><td>আসলে মানে <em>unauthenticated</em> — তুমি কে তা প্রমাণ করোনি।</td></tr>
+            <tr><td><code>403</code> Forbidden</td><td class="codeclass" style="color:var(--warn)">4xx client error</td><td>তুমি পরিচিত, তবু অনুমতি নেই। আবার authenticate করলেও কাজ হবে না।</td></tr>
+            <tr><td><code>404</code> Not Found</td><td class="codeclass" style="color:var(--warn)">4xx client error</td><td>এমন কোনো resource নেই।</td></tr>
+            <tr><td><code>409</code> Conflict</td><td class="codeclass" style="color:var(--warn)">4xx client error</td><td>বর্তমান state-এর সাথে সংঘর্ষ (যেমন পুরনো version এডিট)।</td></tr>
+            <tr><td><code>429</code> Too Many Requests</td><td class="codeclass" style="color:var(--warn)">4xx client error</td><td>তোমাকে rate-limit করা হচ্ছে; ধীরে করো (প্রায়ই Retry-After সহ)।</td></tr>
+            <tr><td><code>500</code> Internal Server Error</td><td class="codeclass" style="color:var(--bad)">5xx server error</td><td>server-এ bug হলো; তোমার request ঠিকই ছিল।</td></tr>
+            <tr><td><code>502</code> Bad Gateway</td><td class="codeclass" style="color:var(--bad)">5xx server error</td><td>একটা proxy backend থেকে অবৈধ উত্তর পেল।</td></tr>
+            <tr><td><code>503</code> Service Unavailable</td><td class="codeclass" style="color:var(--bad)">5xx server error</td><td>সাময়িকভাবে down/overloaded; পরে চেষ্টা করো।</td></tr>
+            <tr><td><code>504</code> Gateway Timeout</td><td class="codeclass" style="color:var(--bad)">5xx server error</td><td>একটা proxy backend-এর জন্য অপেক্ষা করে হাল ছেড়ে দিল (timeout)।</td></tr>
+          </tbody>
+        </table></div>
+        <p style="font-size:13.5px;color:var(--muted);margin-top:-6px">সব status-এর মানে MDN অনুযায়ী। যে দুই জোড়া মানুষ গুলিয়ে ফেলে: <b>401 বনাম 403</b> (unauthenticated বনাম অনুমতি-নেই) আর <b>502 বনাম 504</b> (backend-এর খারাপ উত্তর বনাম সময়মতো কোনো উত্তরই না)।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" rel="noopener">[MDN]</a></span></p>
+        <h3 class="sub">Header (প্রতিটা message-এর metadata)</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Header</th><th>কী করে</th></tr></thead>
+          <tbody>
+            <tr><td><code>Content-Type</code></td><td>body-র format ঘোষণা করে, যেমন <code>application/json</code> — যাতে প্রাপক জানে কীভাবে পড়তে হবে।</td></tr>
+            <tr><td><code>Authorization</code></td><td>পরিচয় প্রমাণে credential বহন করে, যেমন <code>Bearer &lt;token&gt;</code>। না থাকলে/ভুল হলে সাধারণত 401।</td></tr>
+            <tr><td><code>Cache-Control</code></td><td>caching-এর মূল হাতল: একটা response কতক্ষণ পুনর্ব্যবহার করা যাবে, বা আদৌ store করা যাবে কিনা। (caching/CDN সেকশনে খুব কাজে লাগবে।)</td></tr>
+            <tr><td><code>Set-Cookie</code></td><td>server কীভাবে browser-কে একটা cookie দেয় — যে কৌশলে একটা ভুলোমনা protocol-এ স্মৃতি যোগ হয় (নিচে দেখুন)।</td></tr>
+            <tr><td><code>Host</code></td><td>request কোন domain-এর জন্য — এক IP-তে অনেক site চালাতে দেয়। HTTP/1.1-এ বাধ্যতামূলক।</td></tr>
+          </tbody>
+        </table></div>
+        <p style="font-size:13.5px;color:var(--muted);margin-top:-6px">Header-এর বর্ণনা MDN অনুযায়ী।<span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers" target="_blank" rel="noopener">[MDN]</a></span></p>
+        <h3 class="sub">HTTP কেন “stateless” — আর কেন এটাকে ভালোবাসা উচিত</h3>
+        <p>MDN স্পষ্ট বলে: <em>“HTTP stateless: একই connection-এ পরপর করা দুটো request-এর মধ্যে কোনো সংযোগ নেই।”</em><span class="src"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview" target="_blank" rel="noopener">[MDN]</a></span> প্রতিটা request স্বয়ংসম্পূর্ণ; server-এর আপনার আগের request-গুলোর <b>কোনো বিল্ট-ইন স্মৃতি নেই</b>।</p>
+        <div class="callout c-key">
+          <div class="ttl"><span class="ic">🔑</span>মূল কথা — statelessness একটা feature</div>
+          <p>যেহেতু কোনো একটা request server-এর আগেরটা মনে রাখার ওপর <em>নির্ভর করে না</em>, তাই <b>যেকোনো server যেকোনো request সামলাতে পারে</b>। এই বৈশিষ্ট্যই সেকশন ৩-এ একটা load balancer-এর পেছনে ৫০টা একই রকম server বসিয়ে যেটা খালি সেটাকে traffic পাঠাতে দেবে। State (আপনার login, cart) এর ওপরে <em>বসানো</em> হয় cookie + একটা shared session store দিয়ে — protocol-এর ভেতরে নয়।</p>
+        </div>
+        <div class="callout c-scn">
+          <div class="ttl"><span class="ic">🌍</span>বাস্তব উদাহরণ</div>
+          <p>আপনি login করলেন, server পাঠাল <code>Set-Cookie: session=abc123</code>। আপনার browser এরপর <em>প্রতিটা</em> request-এ <code>Cookie: session=abc123</code> জুড়ে দেয়। এভাবেই একটা ভুলোমনা protocol আপনাকে “মনে রাখে”: পরিচয়টা প্রতিটা স্বয়ংসম্পূর্ণ request-এর সাথে চলে, আর server <code>abc123</code>-কে একটা shared store-এ খুঁজে নেয়। এটা মনে রাখুন — এজন্যই একাধিক server যোগ করলে “sticky session” একটা সমস্যা হয়ে দাঁড়ায় (সেকশন ৩)।</p>
+        </div>
+
+        <!-- 1.8 -->
+        <h2 class="topic" id="bn-t-requirements"><span class="kicker">১.৮</span>Functional বনাম non-functional requirement</h2>
+        <p><b>এগুলো কী।</b> দুই ধরনের “কী দরকার।” <b>Functional</b> requirement হলো system <em>কী করে</em>; <b>non-functional</b> requirement হলো <em>কতটা ভালোভাবে</em> করতে হবে।<span class="src"><a href="https://www.geeksforgeeks.org/software-engineering/functional-vs-non-functional-requirements/" target="_blank" rel="noopener">[GeeksforGeeks]</a></span></p>
+        <div class="when">
+          <div class="when-card good"><h4>📋 Functional (feature)</h4>
+            <ul><li>“User একটা tweet post করতে পারে।”</li><li>“Search মিলে যাওয়া product দেখায়।”</li><li>“Payment process হয়।”</li><li>উত্তর দেয়: <em>এটা কী করতে পারে?</em></li></ul></div>
+          <div class="when-card bad" style="border-color:var(--border)"><h4>⚙️ Non-functional (গুণ)</h4>
+            <ul><li>“Feed ২০০ ms-এর কমে load হয়।”</li><li>“99.99% available।”</li><li>“গৃহীত কোনো order কখনো হারায় না।”</li><li>উত্তর দেয়: <em>কতটা ভালোভাবে চলতে হবে?</em></li></ul></div>
+        </div>
+        <p><b>কেন জরুরি।</b> Non-functional requirement (NFR) সাধারণত <b>পরে জুড়ে দেওয়া যায় না</b> — একটা availability বা scale-এর target <em>পুরো</em> architecture গড়ে দেয়। এজন্যই system design-এর একেবারে প্রথম ধাপ হলো এগুলো সামনে টেনে আনা। যেগুলোর সাথে বারবার দেখা হবে, grounded সংজ্ঞা সহ:</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>গুণ</th><th>যে প্রশ্নের উত্তর দেয়</th><th>ভিত্তি</th></tr></thead>
+          <tbody>
+            <tr><td><b>Scalability</b></td><td>resource যোগ করে কি বেশি load সামলানো যায়?</td><td>Horizontal (বেশি machine) বনাম vertical (বড় machine)।</td></tr>
+            <tr><td><b>Availability</b></td><td>কত ভাগ সময় এটা পৌঁছানো যায়?</td><td>“nine”-এ মাপা হয়: 99.9% ≈ বছরে ৮.৮ ঘণ্টা down; 99.999% ≈ বছরে ৫ মিনিট।<span class="src"><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html" target="_blank" rel="noopener">[AWS]</a></span></td></tr>
+            <tr><td><b>Latency</b></td><td>একটা request-এ কত সময় লাগে?</td><td>average নয়, percentile (p95/p99) দেখুন (১.৯)।</td></tr>
+            <tr><td><b>Durability</b></td><td>জমানো data কি টিকে থাকবে (হারাবে না)?</td><td>availability থেকে আলাদা। Amazon S3 “eleven nines” (99.999999999%) durability-র জন্য নকশা করা।<span class="src"><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html" target="_blank" rel="noopener">[AWS]</a></span></td></tr>
+            <tr><td><b>Reliability</b></td><td>fault সত্ত্বেও কি ঠিক কাজটা করে যায়?</td><td>ছাতার মতো গুণ; availability এর একটা অংশ।<span class="src"><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank" rel="noopener">[AWS]</a></span></td></tr>
+            <tr><td><b>Consistency</b></td><td>সব reader কি একই, সর্বশেষ data দেখে?</td><td>strong থেকে eventual — বড় distributed trade-off (সেকশন ৬)।</td></tr>
+            <tr><td><b>Maintainability</b></td><td>পরে কত সস্তায় বদলানো যায়?</td><td>Modularity, testability ইত্যাদি — ISO/IEC 25010-এর সংজ্ঞা।<span class="src"><a href="https://quality.arc42.org/standards/iso-25010" target="_blank" rel="noopener">[ISO 25010]</a></span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান — durability ≠ availability</div>
+          <p>সবচেয়ে বেশি গুলিয়ে ফেলা জোড়া। <b>Durability</b> = “আমার data কি এখনো আছে?” <b>Availability</b> = “এই মুহূর্তে কি service-এ পৌঁছাতে পারছি?” একটা system প্রচণ্ড durable হতে পারে (কখনো data হারায় না) অথচ সাময়িকভাবে unavailable (এই মুহূর্তে পড়তে পারছেন না), আবার উল্টোটাও। এরা স্বাধীন দুই হাতল।<span class="src"><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html" target="_blank" rel="noopener">[AWS]</a></span></p>
+        </div>
+
+        <!-- 1.9 -->
+        <h2 class="topic" id="bn-t-latency"><span class="kicker">১.৯</span>Latency বনাম throughput — আর যে সংখ্যাগুলো মুখস্থ রাখা দরকার</h2>
+        <p><b>এগুলো কী।</b> <b>Latency</b> হলো <em>একটা</em> operation-এ কত সময় লাগে (যেমন প্রতি request-এ ৫০ ms)। <b>Throughput</b> হলো একক সময়ে কতগুলো করতে পারেন (যেমন ১০,০০০ request/সেকেন্ড)। এরা আলাদা আর প্রায়ই টানাপোড়েনে থাকে: কাজ batch করলে throughput বাড়ে অথচ একটা item-এর latency <em>খারাপ</em> হতে পারে।</p>
+        <div class="callout c-scn">
+          <div class="ttl"><span class="ic">🌍</span>বাস্তব উদাহরণ</div>
+          <p>একটা supermarket checkout: <b>latency</b> হলো <em>আপনার</em> cart-এর বিল হতে কত সময় লাগে; <b>throughput</b> হলো দোকান ঘণ্টায় কতজন খদ্দের সামলায়। বেশি lane খোলা (বেশি server) throughput বাড়ায়। প্রতিটা scanner দ্রুত করা latency কমায়। যে ম্যানেজার শুধু throughput দেখে, সে হয়তো আপনার ব্যক্তিগত অপেক্ষাটা বাজে করে ফেলবে — এজন্যই আমরা average নয়, <b>tail latency</b> (ধীর অল্প কিছু) দেখি।</p>
+        </div>
+        <p><b>সংখ্যাগুলো কেন জরুরি।</b> ভালো design আসে <em>আপেক্ষিক</em> গতির স্বজ্ঞা থেকে: memory disk-এর চেয়ে বহুগুণ দ্রুত, যা আবার সমুদ্র-পারের network hop-এর চেয়ে দ্রুত। Jeff Dean-এর বিখ্যাত “Latency Numbers Every Programmer Should Know” এই মাত্রাগুলো ধরে রাখে। ডান কলামটা প্রতিটা মানকে ~১০০ কোটি গুণ বড় করে (1 ns → 1 সেকেন্ড) যাতে ফারাকটা মানুষের মাপে আসে।</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Operation</th><th>আনুমানিক সময়</th><th>যদি 1 ns = 1 সেকেন্ড হয়…</th></tr></thead>
+          <tbody>
+            <tr><td>L1 cache reference</td><td>~0.5–1 ns</td><td>~1 সেকেন্ড</td></tr>
+            <tr><td>Main memory (RAM) reference</td><td>~100 ns</td><td>~1.7 মিনিট</td></tr>
+            <tr><td>RAM থেকে 1 MB ক্রমিক পড়া</td><td>~250 µs</td><td>~3 দিন</td></tr>
+            <tr><td>SSD random read (4 KB)</td><td>~150 µs</td><td>~1.7 দিন</td></tr>
+            <tr><td>একই datacenter-এ round trip</td><td>~500 µs</td><td>~6 দিন</td></tr>
+            <tr><td>SSD থেকে 1 MB ক্রমিক পড়া</td><td>~1 ms</td><td>~12 দিন</td></tr>
+            <tr><td>Disk seek (ঘূর্ণায়মান HDD)</td><td>~10 ms</td><td>~4 মাস</td></tr>
+            <tr><td>Disk থেকে 1 MB ক্রমিক পড়া</td><td>~20 ms</td><td>~8 মাস</td></tr>
+            <tr><td>মহাদেশ পেরিয়ে network round trip</td><td>~150 ms</td><td>~5 বছর</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান — এগুলো মাত্রা, benchmark নয়</div>
+          <p>এই মানগুলো Jeff Dean-এর ~২০১২ সালের একটা আলোচনা থেকে (একটা বহুল-উদ্ধৃত gist-এর মাধ্যমে জনপ্রিয়)।<span class="src"><a href="https://gist.github.com/jboner/2841832" target="_blank" rel="noopener">[Jeff Dean gist]</a></span> hardware এগিয়েছে — আধুনিক NVMe SSD এই SSD সংখ্যাগুলোকে এক মাত্রা ছাড়িয়ে যায়। সঠিক অঙ্ক নয়, <b>আপেক্ষিক</b> সিঁড়িটা মুখস্থ রাখুন (cache ≪ RAM ≪ SSD ≪ disk ≪ সমুদ্র-পার network)। একটা সংখ্যা প্রায় বদলায় না: ~150 ms আন্তঃমহাদেশীয় round trip — এটা প্রযুক্তি নয়, আলোর গতিতে বাঁধা।<span class="src"><a href="https://norvig.com/21-days.html" target="_blank" rel="noopener">[Norvig]</a></span></p>
+        </div>
+
+        <!-- 1.10 -->
+        <h2 class="topic" id="bn-t-estimation"><span class="kicker">১.১০</span>Estimation প্রাথমিক: 2-এর power, data-র আকার, ও QPS</h2>
+        <p><b>এটা কী।</b> “Back-of-the-envelope” estimation — দ্রুত, রুক্ষ হিসাব যা বানানোর আগে একটা design-কে যাচাই করে। <em>এটা কি memory-তে আঁটবে? এটা কি ৩০ request/সেকেন্ড নাকি ৩০,০০০?</em> নির্ভুলতা লাগে না; লাগে সঠিক মাত্রা। (আসল target-এর বিপরীতে পূর্ণ sizing আমরা capstone-এ করব; এটা টুলকিট।)</p>
+        <h3 class="sub">2-এর power-কে সাধারণ হাজার হিসেবে পড়ুন</h3>
+        <p>সবচেয়ে কাজের কৌশল: 2¹⁰-এর প্রতিটা ধাপ (×1,024) দশমিকে প্রায় ঠিক ×1,000, কারণ 2¹⁰ = 1,024 ≈ 10³। তাই binary আকারকে মাথার মধ্যেই হাজার/মিলিয়ন/বিলিয়ন হিসেবে পড়তে পারেন।<span class="src"><a href="https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation" target="_blank" rel="noopener">[ByteByteGo]</a></span></p>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Power</th><th>প্রকৃত মান</th><th>আনুমানিক</th><th>একক</th></tr></thead>
+          <tbody>
+            <tr><td>2¹⁰</td><td>1,024</td><td>~1 হাজার</td><td>1 KB</td></tr>
+            <tr><td>2²⁰</td><td>1,048,576</td><td>~1 মিলিয়ন</td><td>1 MB</td></tr>
+            <tr><td>2³⁰</td><td>1,073,741,824</td><td>~1 বিলিয়ন</td><td>1 GB</td></tr>
+            <tr><td>2⁴⁰</td><td>1,099,511,627,776</td><td>~1 ট্রিলিয়ন</td><td>1 TB</td></tr>
+            <tr><td>2⁵⁰</td><td>1,125,899,906,842,624</td><td>~1 কোয়াড্রিলিয়ন</td><td>1 PB</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder — KB বনাম KiB</div>
+          <p>কড়াভাবে, “kilo” মানে 1,000 (দশমিক), তাই মান-সংস্থা IEC binary মানগুলোর জন্য <b>kibibyte (KiB) = 1,024</b>, mebibyte, gibibyte ইত্যাদি চালু করেছে।<span class="src"><a href="https://en.wikipedia.org/wiki/Binary_prefix" target="_blank" rel="noopener">[Wikipedia]</a></span> বাস্তবে industry KB/MB/GB দিয়ে 1,024-ভিত্তিক মানই বোঝায়। estimation-এ প্রতি ধাপে ~2.4% ভুল ক্ষতিকর নয় — তবে এটা জমে (2⁵⁰ হলো 10¹⁵-এর ~12.6% বেশি), এজন্যই একটা “1 TB” disk (দশমিক) আপনার OS-এ মাত্র ~931 GiB (binary) দেখায়।</p>
+        </div>
+        <h3 class="sub">সাধারণ জিনিসের আকার</h3>
+        <ul>
+          <li><b>1 ASCII character = 1 byte.</b> তাই সাধারণ ইংরেজি text-এর <em>N</em> character ≈ <em>N</em> byte।<span class="src"><a href="https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation" target="_blank" rel="noopener">[ByteByteGo]</a></span></li>
+          <li><b>UTF-8 প্রতি character-এ 1–4 byte</b> — ইংরেজির জন্য 1, বেশিরভাগ accented/CJK text-এ 2–3, emoji-তে 4। আন্তর্জাতিক text-এ প্রতি character 2–4 byte ধরুন।<span class="src"><a href="https://en.wikipedia.org/wiki/UTF-8" target="_blank" rel="noopener">[Wikipedia]</a></span></li>
+          <li><b>একটা UUID raw binary-তে 16 byte</b>, কিন্তু hyphenated text রূপে <b>36 byte</b> — ১০০ কোটি UUID মানে ~16 GB বনাম ~36 GB।<span class="src"><a href="https://en.wikipedia.org/wiki/Universally_unique_identifier" target="_blank" rel="noopener">[Wikipedia]</a></span></li>
+          <li><b>একটা ছোট post</b> (metadata সহ tweet-আকারের একটা record) ≈ কয়েকশ byte থেকে ~1 KB।</li>
+        </ul>
+        <h3 class="sub">“প্রতিদিনের request”-কে QPS-এ বদলানো</h3>
+        <div class="callout c-key">
+          <div class="ttl"><span class="ic">🔑</span>মুখস্থ রাখার একটা ধ্রুবক</div>
+          <p>একদিনে <b>86,400 সেকেন্ড</b> (24 × 3,600)। তাই <b>average QPS = প্রতিদিনের request ÷ 86,400</b>। একটা কাজের সহযোগী তথ্য: ৩০ দিনের একটা মাসে ~২৬ লক্ষ সেকেন্ড, তাই <b>~২৬ লক্ষ request/মাস ≈ 1 request/সেকেন্ড</b>।<span class="src"><a href="https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation" target="_blank" rel="noopener">[ByteByteGo]</a></span></p>
+        </div>
+        <div class="callout c-jrg">
+          <div class="ttl"><span class="ic">📖</span>Jargon decoder — QPS</div>
+          <p><b>QPS</b> = Queries (বা request) Per Second, load-এর আদর্শ একক। <b>কাজের উদাহরণ:</b> 2,500,000 request/দিন ÷ 86,400 ≈ average <b>29 QPS</b>। ব্যস্ত সময়ের জন্য জায়গা রাখতে <b>peak QPS</b> (সাধারণত ~2× average) ধরে পরিকল্পনা করুন।</p>
+        </div>
+        <div class="callout c-warn">
+          <div class="ttl"><span class="ic">⚠️</span>সাবধান</div>
+          <p>একটা দিন <b>দশ লক্ষ সেকেন্ড নয়</b> — ~86,400 (≈10⁵)। দশ লক্ষ সেকেন্ড হলো ~11.6 দিন। এগুলো গুলিয়ে ফেললে capacity-কে ~11× বেশি দেখায়। দ্রুত হিসাব করার সময় 86,400-কে 100,000-এ round করুন — সহজ, আর একটু কম QPS দিয়ে নিরাপদ থাকে।</p>
+        </div>
+
+        <div class="callout c-key" style="margin-top:34px">
+          <div class="ttl"><span class="ic">✅</span>সেকশন ১ সারসংক্ষেপ — আপনার ভিত্তি</div>
+          <p>একটা <b>server</b> হলো request-এর জন্য অপেক্ষমাণ একটা program; এর পেছনে বসে একটা <b>web server</b> আর আপনার <b>application server</b>। Client আর server <b>request/response</b> round-trip-এ কথা বলে <b>HTTP</b>-তে, যা <b>stateless</b> — এই বৈশিষ্ট্যই শীঘ্রই অনেক একই রকম server চালাতে দেবে। একটা request যায় <b>নাম → নম্বর → পাইপ → জিজ্ঞাসা → উত্তর</b> (DNS → IP/port → TCP/TLS → HTTP)। আপনার code চলে একটা <b>process</b> হিসেবে, একটা <b>container</b>-এর ভেতরে, সম্ভবত একটা <b>VM/instance</b>-এর ভেতরে, একটা <b>machine</b>-এ। আর আপনি এখন <b>মাত্রায়</b> ভাবতে পারেন — latency-র সিঁড়ি, 2-এর power, ও QPS। যেই মুহূর্তে একটা server যথেষ্ট নয়, সেকশন ৩ এই সবকিছু কাজে লাগায়।</p>
+        </div>
+
+        <div class="sources">
+          <h4>উৎস ও আরও পড়া (সেকশন ১)</h4>
+          <ol>
+            <li>MDN Web Docs — <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" target="_blank" rel="noopener">Overview of HTTP</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" target="_blank" rel="noopener">Methods</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" rel="noopener">Status codes</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers" target="_blank" rel="noopener">Headers</a>, <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_web_server" target="_blank" rel="noopener">What is a web server?</a>।</li>
+            <li>IETF — <a href="https://www.rfc-editor.org/rfc/rfc9110#name-method-definitions" target="_blank" rel="noopener">RFC 9110 (HTTP Semantics)</a>; Docker/Microsoft/AWS — <a href="https://www.docker.com/resources/what-container/" target="_blank" rel="noopener">container</a>, <a href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/about/containers-vs-vm" target="_blank" rel="noopener">VM বনাম container</a>, <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html" target="_blank" rel="noopener">EC2 instance</a>।</li>
+            <li>Latency — <a href="https://gist.github.com/jboner/2841832" target="_blank" rel="noopener">Jeff Dean / jboner gist</a>; Estimation — <a href="https://bytebytego.com/courses/system-design-interview/back-of-the-envelope-estimation" target="_blank" rel="noopener">ByteByteGo</a>; requirements — <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" target="_blank" rel="noopener">AWS Well-Architected</a>, <a href="https://quality.arc42.org/standards/iso-25010" target="_blank" rel="noopener">ISO/IEC 25010</a>।</li>
           </ol>
         </div>
       </section>
@@ -2707,130 +3046,144 @@ mermaid.initialize({ startOnLoad:false, securityLevel:'loose', theme:'default',
   flowchart:{ htmlLabels:true, curve:'linear' }, sequence:{ useMaxWidth:true } });
 
 /* ---------- Curriculum: the full sidebar map (drives nav + accordion). ---------- */
+/* Each section: title/title_bn + short crumb/crumb_bn. Each topic: [id, English, বাংলা].
+   Technical terms are deliberately kept in English inside the Bangla labels. */
 const SECTIONS = [
-  { id:'s1', n:1, phase:1, title:'Foundations: One Request, One Program & the Vocabulary',
+  { id:'s1', n:1, title:'Foundations: One Request, One Program & the Vocabulary',
+    title_bn:'ভিত্তি: একটি Request, একটি Program ও পরিভাষা', crumb:'Foundations', crumb_bn:'ভিত্তি',
     topics:[
-      ['t-what','What system design is'],
-      ['t-server','What a server actually is'],
-      ['t-layers','Web server vs. application server'],
-      ['t-clientserver','Client–server & the round-trip'],
-      ['t-instance','Machine · VM · instance · container · process'],
-      ['t-request','Anatomy of a web request'],
-      ['t-http','HTTP up close (methods, codes, headers)'],
-      ['t-requirements','Functional vs. non-functional'],
-      ['t-latency','Latency vs. throughput & the numbers'],
-      ['t-estimation','Estimation primer (powers of 2, QPS)']
+      ['t-what','What system design is','System design কী'],
+      ['t-server','What a server actually is','Server আসলে কী'],
+      ['t-layers','Web server vs. application server','Web server বনাম application server'],
+      ['t-clientserver','Client–server & the round-trip','Client–server ও round-trip'],
+      ['t-instance','Machine · VM · instance · container · process','Machine · VM · instance · container · process'],
+      ['t-request','Anatomy of a web request','একটি web request-এর গঠন'],
+      ['t-http','HTTP up close (methods, codes, headers)','HTTP কাছ থেকে (method, code, header)'],
+      ['t-requirements','Functional vs. non-functional','Functional বনাম non-functional'],
+      ['t-latency','Latency vs. throughput & the numbers','Latency বনাম throughput ও সংখ্যাগুলো'],
+      ['t-estimation','Estimation primer (powers of 2, QPS)','Estimation প্রাথমিক (2-এর power, QPS)']
     ] },
-  { id:'s2', n:2, phase:2, title:'Networking & Cloud Topology: How a Request Travels',
+  { id:'s2', n:2, title:'Networking & Cloud Topology: How a Request Travels',
+    title_bn:'Networking ও Cloud Topology: একটি Request কীভাবে যায়', crumb:'Networking & Topology', crumb_bn:'Networking ও Topology',
     topics:[
-      ['t-transport','TCP vs. UDP & the HTTPS handshakes'],
-      ['t-reuse','Connection reuse: keep-alive, HTTP/2, HTTP/3'],
-      ['t-proxies','Forward proxy vs. reverse proxy'],
-      ['t-cloud','Regions, availability zones & edges'],
-      ['t-physics','The speed-of-light latency floor']
+      ['t-transport','TCP vs. UDP & the HTTPS handshakes','TCP বনাম UDP ও HTTPS handshake'],
+      ['t-reuse','Connection reuse: keep-alive, HTTP/2, HTTP/3','Connection reuse: keep-alive, HTTP/2, HTTP/3'],
+      ['t-proxies','Forward proxy vs. reverse proxy','Forward proxy বনাম reverse proxy'],
+      ['t-cloud','Regions, availability zones & edges','Region, availability zone ও edge'],
+      ['t-physics','The speed-of-light latency floor','আলোর গতির latency-সীমা']
     ] },
-  { id:'s3', n:3, phase:2, title:'Scaling Out: Load Balancing & Statelessness',
+  { id:'s3', n:3, title:'Scaling Out: Load Balancing & Statelessness',
+    title_bn:'Scale Out করা: Load Balancing ও Statelessness', crumb:'Scaling Out', crumb_bn:'Scale Out',
     topics:[
-      ['t-spof','One server isn\'t enough: SPOF & scaling'],
-      ['t-lb','Load balancers (L4 vs L7, algorithms)'],
-      ['t-health','Health checks & failover'],
-      ['t-stateless','Statelessness & sessions']
+      ['t-spof','One server isn\'t enough: SPOF & scaling','একটি server যথেষ্ট নয়: SPOF ও scaling'],
+      ['t-lb','Load balancers (L4 vs L7, algorithms)','Load balancer (L4 বনাম L7, algorithm)'],
+      ['t-health','Health checks & failover','Health check ও failover'],
+      ['t-stateless','Statelessness & sessions','Statelessness ও session']
     ] },
-  { id:'s4', n:4, phase:3, title:'The Data Layer: Storage, Durability, Replication & Sharding',
+  { id:'s4', n:4, title:'The Data Layer: Storage, Durability, Replication & Sharding',
+    title_bn:'Data Layer: Storage, Durability, Replication ও Sharding', crumb:'The Data Layer', crumb_bn:'Data Layer',
     topics:[
-      ['t-db-shared','The database as source of truth'],
-      ['t-sql','Relational (SQL) & ACID'],
-      ['t-nosql','NoSQL families & choosing'],
-      ['t-indexes','Indexes, query plans, normalization'],
-      ['t-durability','WAL, fsync & durability'],
-      ['t-pooling','Connection pooling & the bottleneck'],
-      ['t-blob-search','Object storage & search indexes'],
-      ['t-replication','Replication & read replicas'],
-      ['t-sharding','Sharding / partitioning']
+      ['t-db-shared','The database as source of truth','সত্যের উৎস হিসেবে database'],
+      ['t-sql','Relational (SQL) & ACID','Relational (SQL) ও ACID'],
+      ['t-nosql','NoSQL families & choosing','NoSQL পরিবার ও বাছাই'],
+      ['t-indexes','Indexes, query plans, normalization','Index, query plan, normalization'],
+      ['t-durability','WAL, fsync & durability','WAL, fsync ও durability'],
+      ['t-pooling','Connection pooling & the bottleneck','Connection pooling ও bottleneck'],
+      ['t-blob-search','Object storage & search indexes','Object storage ও search index'],
+      ['t-replication','Replication & read replicas','Replication ও read replica'],
+      ['t-sharding','Sharding / partitioning','Sharding / partitioning']
     ] },
-  { id:'s5', n:5, phase:4, title:'Making It Fast: Caching & CDNs',
+  { id:'s5', n:5, title:'Making It Fast: Caching & CDNs',
+    title_bn:'দ্রুত করা: Caching ও CDN', crumb:'Caching & CDNs', crumb_bn:'Caching ও CDN',
     topics:[
-      ['t-cache-why','Why cache: hits, misses & the win'],
-      ['t-cache-tiers','Where caches live (the stack)'],
-      ['t-cache-strategies','Caching strategies'],
-      ['t-cache-eviction','Eviction & invalidation'],
-      ['t-cache-stampede','Cache stampede & hot keys'],
-      ['t-cdn','CDNs: caching at the edge'],
-      ['t-tail','Tail latency (p95/p99)']
+      ['t-cache-why','Why cache: hits, misses & the win','কেন cache: hit, miss ও লাভ'],
+      ['t-cache-tiers','Where caches live (the stack)','Cache কোথায় থাকে (stack)'],
+      ['t-cache-strategies','Caching strategies','Caching কৌশল'],
+      ['t-cache-eviction','Eviction & invalidation','Eviction ও invalidation'],
+      ['t-cache-stampede','Cache stampede & hot keys','Cache stampede ও hot key'],
+      ['t-cdn','CDNs: caching at the edge','CDN: edge-এ caching'],
+      ['t-tail','Tail latency (p95/p99)','Tail latency (p95/p99)']
     ] },
-  { id:'s6', n:6, phase:4, title:'Distributed Reality: Clocks, Consistency, CAP & PACELC',
+  { id:'s6', n:6, title:'Distributed Reality: Clocks, Consistency, CAP & PACELC',
+    title_bn:'Distributed বাস্তবতা: Clock, Consistency, CAP ও PACELC', crumb:'Distributed Reality', crumb_bn:'Distributed বাস্তবতা',
     topics:[
-      ['t-fallacies','Fallacies & partial failure'],
-      ['t-clocks','You can\'t trust clocks'],
-      ['t-happens','Happens-before & logical clocks'],
-      ['t-consistency','The consistency spectrum'],
-      ['t-cap','Partitions & the CAP theorem'],
-      ['t-pacelc','PACELC & conflict resolution']
+      ['t-fallacies','Fallacies & partial failure','Fallacy ও partial failure'],
+      ['t-clocks','You can\'t trust clocks','Clock-কে বিশ্বাস করা যায় না'],
+      ['t-happens','Happens-before & logical clocks','Happens-before ও logical clock'],
+      ['t-consistency','The consistency spectrum','Consistency-র বর্ণালী'],
+      ['t-cap','Partitions & the CAP theorem','Partition ও CAP theorem'],
+      ['t-pacelc','PACELC & conflict resolution','PACELC ও conflict resolution']
     ] },
-  { id:'s7', n:7, phase:5, title:'Agreement: Quorums & Consensus',
+  { id:'s7', n:7, title:'Agreement: Quorums & Consensus',
+    title_bn:'মতৈক্য: Quorum ও Consensus', crumb:'Quorums & Consensus', crumb_bn:'Quorum ও Consensus',
     topics:[
-      ['t-quorum','Quorums & the R + W > N rule'],
-      ['t-quorum-avail','Sloppy quorums & convergence'],
-      ['t-consensus','The consensus problem (& FLP)'],
-      ['t-raft','Raft: understandable consensus'],
-      ['t-coordination','Coordination & service discovery']
+      ['t-quorum','Quorums & the R + W > N rule','Quorum ও R + W > N নিয়ম'],
+      ['t-quorum-avail','Sloppy quorums & convergence','Sloppy quorum ও convergence'],
+      ['t-consensus','The consensus problem (& FLP)','Consensus সমস্যা (ও FLP)'],
+      ['t-raft','Raft: understandable consensus','Raft: বোধগম্য consensus'],
+      ['t-coordination','Coordination & service discovery','Coordination ও service discovery']
     ] },
-  { id:'s8', n:8, phase:5, title:'Application Correctness: Idempotency, Delivery & Transactions',
+  { id:'s8', n:8, title:'Application Correctness: Idempotency, Delivery & Transactions',
+    title_bn:'Application-এর শুদ্ধতা: Idempotency, Delivery ও Transaction', crumb:'Application Correctness', crumb_bn:'Application-এর শুদ্ধতা',
     topics:[
-      ['t-outcomes','The three outcomes of a call'],
-      ['t-idempotency','Idempotency: safe retries'],
-      ['t-delivery','Delivery semantics & exactly-once'],
-      ['t-txns','Distributed transactions: 2PC & sagas'],
-      ['t-outbox','The outbox pattern']
+      ['t-outcomes','The three outcomes of a call','একটি call-এর তিন পরিণতি'],
+      ['t-idempotency','Idempotency: safe retries','Idempotency: নিরাপদ retry'],
+      ['t-delivery','Delivery semantics & exactly-once','Delivery semantics ও exactly-once'],
+      ['t-txns','Distributed transactions: 2PC & sagas','Distributed transaction: 2PC ও saga'],
+      ['t-outbox','The outbox pattern','Outbox pattern']
     ] },
-  { id:'s9', n:9, phase:6, title:'Communication: Async Messaging, APIs & Protocols',
+  { id:'s9', n:9, title:'Communication: Async Messaging, APIs & Protocols',
+    title_bn:'যোগাযোগ: Async Messaging, API ও Protocol', crumb:'Communication', crumb_bn:'যোগাযোগ',
     topics:[
-      ['t-sync-async','Sync vs async & message queues'],
-      ['t-pubsub','Publish–subscribe & events'],
-      ['t-kafka','Event streaming with Kafka'],
-      ['t-backpressure','Backpressure, lag & dead-letter queues'],
-      ['t-rest','REST API design'],
-      ['t-rpc-graphql','RPC, gRPC & GraphQL'],
-      ['t-realtime','Real-time delivery (WebSocket/SSE)'],
-      ['t-gateway','API gateways'],
-      ['t-ratelimit','Rate limiting']
+      ['t-sync-async','Sync vs async & message queues','Sync বনাম async ও message queue'],
+      ['t-pubsub','Publish–subscribe & events','Publish–subscribe ও event'],
+      ['t-kafka','Event streaming with Kafka','Kafka দিয়ে event streaming'],
+      ['t-backpressure','Backpressure, lag & dead-letter queues','Backpressure, lag ও dead-letter queue'],
+      ['t-rest','REST API design','REST API design'],
+      ['t-rpc-graphql','RPC, gRPC & GraphQL','RPC, gRPC ও GraphQL'],
+      ['t-realtime','Real-time delivery (WebSocket/SSE)','Real-time delivery (WebSocket/SSE)'],
+      ['t-gateway','API gateways','API gateway'],
+      ['t-ratelimit','Rate limiting','Rate limiting']
     ] },
-  { id:'s10', n:10, phase:7, title:'Architecture, Resilience & the Deployment Substrate',
+  { id:'s10', n:10, title:'Architecture, Resilience & the Deployment Substrate',
+    title_bn:'Architecture, Resilience ও Deployment-এর ভিত্তি', crumb:'Architecture & Deployment', crumb_bn:'Architecture ও Deployment',
     topics:[
-      ['t-monolith','Monolith first & when to split'],
-      ['t-microservices','Microservices & their cost'],
-      ['t-resilience1','Timeouts, deadlines & retries'],
-      ['t-resilience2','Circuit breakers & bulkheads'],
-      ['t-serverless','Serverless & FaaS'],
-      ['t-docker','Containers & Docker'],
-      ['t-kubernetes','Kubernetes orchestration'],
-      ['t-deploy','Deployment strategies'],
-      ['t-iac','Infra as code & immutable infra']
+      ['t-monolith','Monolith first & when to split','Monolith আগে ও কখন ভাঙবেন'],
+      ['t-microservices','Microservices & their cost','Microservices ও এর খরচ'],
+      ['t-resilience1','Timeouts, deadlines & retries','Timeout, deadline ও retry'],
+      ['t-resilience2','Circuit breakers & bulkheads','Circuit breaker ও bulkhead'],
+      ['t-serverless','Serverless & FaaS','Serverless ও FaaS'],
+      ['t-docker','Containers & Docker','Container ও Docker'],
+      ['t-kubernetes','Kubernetes orchestration','Kubernetes orchestration'],
+      ['t-deploy','Deployment strategies','Deployment কৌশল'],
+      ['t-iac','Infra as code & immutable infra','Infra as code ও immutable infra']
     ] },
-  { id:'s11', n:11, phase:8, title:'Operating It: Observability, Autoscaling, Reliability & Security',
+  { id:'s11', n:11, title:'Operating It: Observability, Autoscaling, Reliability & Security',
+    title_bn:'পরিচালনা: Observability, Autoscaling, Reliability ও Security', crumb:'Operating It', crumb_bn:'পরিচালনা',
     topics:[
-      ['t-pillars','Observability: the three pillars'],
-      ['t-signals','What to measure & alerting'],
-      ['t-slo','SLI/SLO/SLA & error budgets'],
-      ['t-autoscale','Autoscaling: closing the loop'],
-      ['t-availmath','Availability math (the nines)'],
-      ['t-dr','Failure domains, DR, RPO/RTO'],
-      ['t-capacity','Capacity, load testing & cost'],
-      ['t-security','Security: identity, encryption, secrets'],
-      ['t-threats','Threats & compliance'],
-      ['t-oncall','On-call, toil & postmortems']
+      ['t-pillars','Observability: the three pillars','Observability: তিন স্তম্ভ'],
+      ['t-signals','What to measure & alerting','কী মাপবেন ও alerting'],
+      ['t-slo','SLI/SLO/SLA & error budgets','SLI/SLO/SLA ও error budget'],
+      ['t-autoscale','Autoscaling: closing the loop','Autoscaling: loop সম্পূর্ণ করা'],
+      ['t-availmath','Availability math (the nines)','Availability-র গণিত (nine-গুলো)'],
+      ['t-dr','Failure domains, DR, RPO/RTO','Failure domain, DR, RPO/RTO'],
+      ['t-capacity','Capacity, load testing & cost','Capacity, load testing ও খরচ'],
+      ['t-security','Security: identity, encryption, secrets','Security: identity, encryption, secret'],
+      ['t-threats','Threats & compliance','হুমকি ও compliance'],
+      ['t-oncall','On-call, toil & postmortems','On-call, toil ও postmortem']
     ] },
-  { id:'s12', n:12, phase:9, title:'Capstones: Putting It All Together',
+  { id:'s12', n:12, title:'Capstones: Putting It All Together',
+    title_bn:'Capstone: সব একসাথে জোড়া লাগানো', crumb:'Capstones', crumb_bn:'Capstone',
     topics:[
-      ['t-template','Design method & symptom→cause map'],
-      ['t-sizing','Back-of-the-envelope sizing'],
-      ['t-cap-url','Capstone: URL shortener'],
-      ['t-cap-feed','Capstone: news feed'],
-      ['t-cap-chat','Capstone: chat system'],
-      ['t-cap-video','Capstone: video streaming'],
-      ['t-cap-geo','Capstone: ride-sharing / geospatial'],
-      ['t-bottlenecks','Bottlenecks & operational review'],
-      ['t-notdistribute','When NOT to distribute']
+      ['t-template','Design method & symptom→cause map','Design পদ্ধতি ও symptom→cause map'],
+      ['t-sizing','Back-of-the-envelope sizing','Back-of-the-envelope sizing'],
+      ['t-cap-url','Capstone: URL shortener','Capstone: URL shortener'],
+      ['t-cap-feed','Capstone: news feed','Capstone: news feed'],
+      ['t-cap-chat','Capstone: chat system','Capstone: chat system'],
+      ['t-cap-video','Capstone: video streaming','Capstone: video streaming'],
+      ['t-cap-geo','Capstone: ride-sharing / geospatial','Capstone: ride-sharing / geospatial'],
+      ['t-bottlenecks','Bottlenecks & operational review','Bottleneck ও operational review'],
+      ['t-notdistribute','When NOT to distribute','কখন distribute করবেন না']
     ] }
 ];
 
@@ -2845,14 +3198,14 @@ SECTIONS.forEach(sec => {
   const head = document.createElement('button');
   head.className = 'sec-head';
   head.setAttribute('aria-expanded', sec.n===1 ? 'true' : 'false');
-  head.innerHTML = `<span class="num">${sec.n}</span><span class="lbl">${sec.title}</span><span class="chev" aria-hidden="true">▸</span>`;
+  head.innerHTML = `<span class="num">${sec.n}</span><span class="lbl"><span lang="en">${sec.title}</span><span lang="bn">${sec.title_bn||sec.title}</span></span><span class="chev" aria-hidden="true">▸</span>`;
   wrap.appendChild(head);
 
   const ul = document.createElement('ul');
   ul.className = 'subnav';
-  sec.topics.forEach(([tid,label])=>{
+  sec.topics.forEach(([tid,label,label_bn])=>{
     const li=document.createElement('li');
-    li.innerHTML=`<a href="#${tid}" data-topic="${tid}">${label}</a>`;
+    li.innerHTML=`<a href="#${tid}" data-topic="${tid}"><span lang="en">${label}</span><span lang="bn">${label_bn||label}</span></a>`;
     ul.appendChild(li);
   });
   wrap.appendChild(ul);
@@ -2888,7 +3241,10 @@ function renderDiagramsIn(panel){
 }
 
 function showSection(id, topicId){
-  const target=document.getElementById(id);
+  // In Bangla mode, prefer a translated panel "<id>bn" if it exists; else fall
+  // back to the English panel (so untranslated sections still show, in English).
+  const bnPanel = root.getAttribute('data-lang')==='bn' ? document.getElementById(id+'bn') : null;
+  const target = bnPanel || document.getElementById(id);
   if(!target) return;
   panels().forEach(p=>p.classList.toggle('active', p===target));
 
@@ -2901,12 +3257,16 @@ function showSection(id, topicId){
   });
 
   const sec=SECTIONS.find(s=>s.id===id);
-  document.getElementById('crumbs').innerHTML=`<b>Section ${sec?sec.n:''}</b> · ${target.dataset.crumb||''}`;
+  const n=sec?sec.n:'';
+  document.getElementById('crumbs').innerHTML=
+    `<span lang="en"><b>Section ${n}</b> · ${(sec&&sec.crumb)||''}</span>`+
+    `<span lang="bn"><b>সেকশন ${n}</b> · ${(sec&&sec.crumb_bn)||(sec&&sec.crumb)||''}</span>`;
 
   renderDiagramsIn(target);
 
   if(topicId){
-    const el=document.getElementById(topicId);
+    // Bangla panel topic headings use id="bn-<topicId>"; English use id="<topicId>".
+    const el=document.getElementById((bnPanel?'bn-':'')+topicId) || document.getElementById(topicId);
     if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); }
     setActiveTopic(topicId);
   } else {
@@ -2957,25 +3317,45 @@ nav.addEventListener('click', e=>{
 const brand=document.querySelector('.brand');
 if(brand){ brand.style.cursor='pointer'; brand.title='Back to start'; brand.addEventListener('click',()=>navigate('s1')); }
 
-/* ---------- Scroll-spy for Section 1 topics ---------- */
+/* ---------- Scroll-spy (highlights the topic you're reading) ---------- */
 const spy=new IntersectionObserver((entries)=>{
-  entries.forEach(en=>{ if(en.isIntersecting) setActiveTopic(en.target.id); });
+  entries.forEach(en=>{ if(en.isIntersecting) setActiveTopic(en.target.id.replace(/^bn-/,'')); });
 },{rootMargin:'-72px 0px -70% 0px', threshold:0});
-document.querySelectorAll('.panel h2.topic').forEach(h=>spy.observe(h));
+function observeTopics(){ document.querySelectorAll('.panel h2.topic').forEach(h=>spy.observe(h)); }
+observeTopics();
 
 /* ---------- Theme toggle ---------- */
 const root=document.documentElement;
 const themeBtn=document.getElementById('themeBtn');
 const themeIc=document.getElementById('themeIc');
 const themeTx=document.getElementById('themeTx');
+const themeTxBn=document.getElementById('themeTxBn');
 function applyTheme(t){
   root.setAttribute('data-theme',t);
   themeIc.textContent=t==='dark'?'☀️':'🌙';
   themeTx.textContent=t==='dark'?'Light':'Dark';
+  themeTxBn.textContent=t==='dark'?'লাইট':'ডার্ক';
   try{localStorage.setItem('sdg-theme',t);}catch(e){}
 }
 applyTheme((()=>{try{return localStorage.getItem('sdg-theme')||'light';}catch(e){return 'light';}})());
 themeBtn.addEventListener('click',()=>applyTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+/* ---------- Language toggle (English / বাংলা) ---------- */
+const langBtn=document.getElementById('langBtn');
+const langTx=document.getElementById('langTx');
+let langReady=false; // guards the initial call (before body/closeNav exist) from re-showing
+function applyLang(L){
+  root.setAttribute('data-lang',L);
+  root.setAttribute('lang',L);                       // proper lang for a11y + font shaping
+  langTx.textContent = L==='bn' ? 'English' : 'বাংলা'; // button shows the language you'll switch TO
+  langBtn.setAttribute('aria-label', L==='bn' ? 'Switch to English' : 'বাংলায় দেখুন');
+  try{localStorage.setItem('sdg-lang',L);}catch(e){}
+  // On a user toggle (after boot), re-show the current section so it swaps to the
+  // matching-language panel. Skipped on first load — routeFromHash() renders then.
+  if(langReady){ const act=document.querySelector('.nav-sec.active'); if(act) showSection(act.dataset.section, null); }
+}
+applyLang((()=>{try{return localStorage.getItem('sdg-lang')||'en';}catch(e){return 'en';}})());
+langBtn.addEventListener('click',()=>applyLang(root.getAttribute('data-lang')==='bn'?'en':'bn'));
 
 /* ---------- Sidebar toggle: collapse on desktop, slide-in drawer on mobile ---------- */
 const body=document.body, scrim=document.getElementById('scrim');
@@ -2994,6 +3374,7 @@ try{ if(localStorage.getItem('sdg-sidebar')==='collapsed') body.classList.add('s
 
 /* ---------- Initial route: home = foundation page, or a deep link ---------- */
 routeFromHash();
+langReady=true;   // from now on, toggling language re-shows the active section
 </script>
 </body>
 </html>
